@@ -70,13 +70,14 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
                                       initWithTarget:self action:@selector(handlePanGesture:)];
         _panPressGestureRecognizer.delegate = self;
         [_collectionView addGestureRecognizer:_panPressGestureRecognizer];
-        
-        for (UIGestureRecognizer *gestureRecognizer in _collectionView.gestureRecognizers) {
-            if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
-                [gestureRecognizer requireGestureRecognizerToFail:_longPressGestureRecognizer];
-                break;
-            }
-        }
+
+// iOS 10 comment out to support drag and drop        
+//        for (UIGestureRecognizer *gestureRecognizer in _collectionView.gestureRecognizers) {
+//            if ([gestureRecognizer isKindOfClass:[UILongPressGestureRecognizer class]]) {
+//                [gestureRecognizer requireGestureRecognizerToFail:_longPressGestureRecognizer];
+//                break;
+//            }
+//        }
         
         [self layoutChanged];
     }
@@ -321,7 +322,10 @@ typedef NS_ENUM(NSInteger, _ScrollingDirection) {
 
 - (void)warpToIndexPath:(NSIndexPath *)indexPath
 {
-    if(indexPath == nil || [lastIndexPath isEqual:indexPath]) {
+     if( indexPath == nil
+        || [ lastIndexPath isEqual: indexPath ]
+        || indexPath.item > [ self.collectionView numberOfItemsInSection: indexPath.section ] - 1 ) 
+    {
         return;
     }
     lastIndexPath = indexPath;
